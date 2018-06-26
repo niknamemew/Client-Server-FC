@@ -1,0 +1,72 @@
+unit Unit2;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, FormUnit1, JSON;
+
+type
+  TForm2 = class(TForm)
+    IdHTTP1: TIdHTTP;
+    Edit1: TEdit;
+    btnPlainCall: TButton;
+    btnToJSON: TButton;
+    procedure btnPlainCallClick(Sender: TObject);
+    procedure btnToJSONClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2;
+  strServerUrl: string;
+
+const
+  strMethodUrl = 'datasnap/rest/TServerMethods1/EchoString/';
+implementation
+
+{$R *.dfm}
+
+procedure TForm2.btnPlainCallClick(Sender: TObject);
+var
+  strParam: string;
+begin
+  strParam := edit1.Text;
+  strServerUrl := format('http://localhost:%s/', [FormUnit1.Form1.EditPort.Text]);
+  ShowMessage (IdHTTP1.Get(strServerUrl + strMethodUrl + strParam));
+end;
+
+procedure TForm2.btnToJSONClick(Sender: TObject);
+var
+  strParam, strHttpResult, strResult: string;
+  jValue: TJSONValue;
+  jObj: TJSONObject;
+  jPair: TJSONPair;
+  jArray: TJSOnArray;
+begin
+  strParam := edit1.Text;
+  strHttpResult := IdHTTP1.Get(strServerUrl +
+  strMethodUrl + strParam);
+  jValue := TJSONObject.ParseJSONValue(
+  TEncoding.ASCII.GetBytes(strHttpResult), 0);
+  if not Assigned (jValue) then
+  begin
+    ShowMessage ('Error in parsing ' + strHttpResult);
+    Exit;
+  end;
+  try
+    jObj := jValue as TJSONObject;
+    jPair := jObj.Get(0); // get the first and only JSON pair
+    jArray := jPair.JsonValue as TJsonArray; // pair value is an array
+    strResult := jArray.Get(0).Value; // first-only element of array
+    ShowMessage ('The response is: ' + strResult);
+  finally
+  jObj.Free;
+  end;
+end;
+
+end.

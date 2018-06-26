@@ -1,0 +1,3 @@
+connect to sample user db2admin;
+
+insert into tfornitori (codforni, ragforni, esragfor, indforni, esindfor, capforni, citforni, escitfor, codpaese) values (0, 'Execom', 'Srl', 'Piazza U. Prunotto', '11', '12051', 'Alba', 'CN', 'IT') 

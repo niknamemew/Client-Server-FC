@@ -1,0 +1,42 @@
+unit Unit2;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, Vcl.StdCtrls;
+
+type
+  TForm2 = class(TForm)
+    Edit1: TEdit;
+    btnPlainCall: TButton;
+    btnToJSON: TButton;
+    IdHTTP1: TIdHTTP;
+    procedure btnPlainCallClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2;
+const
+  strMethodUrl = '/datasnap/rest/TServerMethods1/EchoString/' ;
+  strServerUrl1 = 'http://localhost:';
+implementation
+
+{$R *.dfm}
+
+uses FormUnit1;
+
+procedure TForm2.btnPlainCallClick(Sender: TObject);
+var   strParam: string;
+      strServerUrl2: string;
+begin
+strServerUrl2 := FormUnit1.Form1.EditPort.Text;
+strParam := edit1.Text;
+ShowMessage (IdHTTP1.Get(strServerUrl1 + strServerUrl2 + strMethodUrl + strParam));
+end;
+end.
